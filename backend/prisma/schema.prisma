@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String?  // Nullable for Google OAuth users
+  googleId  String?  @unique
+  name      String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  links     Link[]
+
+  @@index([email])
+  @@index([googleId])
+}
+
+model Link {
+  id          String      @id @default(uuid())
+  userId      String?     // Nullable for public links
+  user        User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  originalUrl String
+  shortCode   String      @unique
+  customAlias String?     @unique
+  title       String?
+  password    String?     // Hashed if protected
+  expiresAt   DateTime?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  geoRules    GeoRule[]
+  analytics   Analytics[]
+
+  @@index([userId])
+  @@index([shortCode])
+  @@index([customAlias])
+}
+
+model GeoRule {
+  id           String   @id @default(uuid())
+  linkId       String
+  link         Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  countryCodes String[] // Array of ISO country codes
+  mode         String   // "allow" or "block"
+  createdAt    DateTime @default(now())
+
+  @@index([linkId])
+}
+
+model Analytics {
+  id          String   @id @default(uuid())
+  linkId      String
+  link        Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  clickedAt   DateTime @default(now())
+  country     String?
+  countryCode String?
+  city        String?
+  ipHash      String   // Hashed IP for privacy
+  userAgent   String?
+  device      String?  // mobile, desktop, tablet
+  browser     String?
+  os          String?
+  referer     String?
+
+  @@index([linkId])
+  @@index([clickedAt])
+  @@index([countryCode])
+}
