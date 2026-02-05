@@ -3,6 +3,7 @@ import { Search, X } from 'lucide-react';
 import Input from './Input';
 import Button from './Button';
 import { Card } from './Card';
+import { cn } from '../lib/utils';
 
 interface Country {
   code: string;
@@ -213,9 +214,5 @@ const CountrySelector = ({ selectedCountries, onChange, mode, onModeChange }: Co
     </div>
   );
 };
-
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(' ');
-}
 
 export default CountrySelector;

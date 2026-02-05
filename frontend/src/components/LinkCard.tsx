@@ -5,6 +5,7 @@ import { Copy, ExternalLink, BarChart3, Edit, Trash2, Lock, Clock, Globe } from 
 import { format } from 'date-fns';
 import { toast } from './useToast';
 import { useState } from 'react';
+import { cn } from '../lib/utils';
 
 interface LinkCardProps {
   link: LinkType;
@@ -152,9 +153,5 @@ const LinkCard = ({ link, onEdit, onDelete, onViewAnalytics }: LinkCardProps) =>
     </Card>
   );
 };
-
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(' ');
-}
 
 export default LinkCard;
