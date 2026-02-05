@@ -1,7 +1,6 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import { config } from './config/env';
 import authRoutes from './routes/auth.routes';
@@ -24,7 +23,9 @@ app.use(cors({
 // Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+
+// Note: We use JWT tokens in Authorization headers, not cookies,
+// so CSRF protection is not needed for this API
 
 // Trust proxy (for getting real IP behind load balancer)
 app.set('trust proxy', true);
